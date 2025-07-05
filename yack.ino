@@ -217,15 +217,6 @@ void yackinit (void)
     GIMSK |= (1<<PCIE);  // Enable pin change interrupt
     
 #endif
-    
-    // Initialize timer1 to serve as the system heartbeat
-    // CK runs at 1MHz. Prescaling by 64 makes that 15625 Hz.
-    // Counting 78 cycles of that generates an overflow every 5ms
-    
-    OCR1C = 78; // 77 counts per cycle
-    TCCR1 |= (1<<CTC1) | 0b00000111 ; // Clear Timer on match, prescale ck by 64
-    OCR1A = 1; // CTC mode does not create an overflow so we use OCR1A
-    
 }
 
 #ifdef POWERSAVE
@@ -462,8 +453,7 @@ void yackbeat (void)
  
  */
 {
-    while((TIFR & (1<<OCF1A)) == 0); // Wait for Timeout
-    TIFR |= (1<<OCF1A);                // Reset output compare flag
+    delay(YACKBEAT);
 }
 
 
