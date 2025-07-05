@@ -500,7 +500,7 @@ void yacktune (void)
 	
 	key(DOWN);
 	
-	while(timer && (digitalRead(DITPIN) && digitalRead(DAHPIN) && !yackctrlkey(TRUE) )
+	while(timer && digitalRead(DITPIN) && digitalRead(DAHPIN) && !yackctrlkey(TRUE) )
 	{
 		timer--;
 		yackbeat();
