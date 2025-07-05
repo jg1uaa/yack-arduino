@@ -937,7 +937,7 @@ byte yackctrlkey(byte mode)
 
 		yackinhibit(ON); // Stop keying, switch on sidetone.
 		
-		_delay_ms(50);
+		delay(50);
 		
 		while(!(BTNINP & (1<<BTNPIN))) // Busy wait for release
 		{
@@ -956,7 +956,7 @@ byte yackctrlkey(byte mode)
 			
 		}
         
-		_delay_ms(50); // Trailing edge debounce	
+		delay(50); // Trailing edge debounce	
 		
 	}
 
