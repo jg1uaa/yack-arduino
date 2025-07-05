@@ -899,7 +899,7 @@ byte yackctrlkey(byte mode)
 	
     volbfr = volflags; // Remember current volatile settings
     
-	if (!(BTNINP & (1<<BTNPIN))) // If command button is pressed
+	if (!digitalRead(BTNPIN)) // If command button is pressed
 	{
         
         volbfr |= CKLATCH; // Set control key latch
@@ -914,7 +914,7 @@ byte yackctrlkey(byte mode)
 		
 		delay(50);
 		
-		while(!(BTNINP & (1<<BTNPIN))) // Busy wait for release
+		while(!digitalRead(BTNPIN)) // Busy wait for release
 		{
             
 			if (!digitalRead(DITPIN)) // Someone pressing DIT paddle
