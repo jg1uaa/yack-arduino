@@ -85,7 +85,7 @@
 #define		YACKMS(n)		(n/YACKBEAT) // Beats in n milliseconds
 
 // Power save mode
-#define     POWERSAVE       // Comment this line if no power save mode required
+//#define     POWERSAVE       // Comment this line if no power save mode required
 #define     PSTIME          30 // 30 seconds until automatic powerdown
 #define     PWRWAKE         ((1<<PCINT3) | (1<<PCINT4) | (1<<PCINT2)) // Dit, Dah or Command wakes us up..
 
