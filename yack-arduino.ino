@@ -31,13 +31,6 @@
  */ 
 
 
-#ifndef F_CPU
-#error F_CPU undefined!! Please define in Makefile
-#endif
-
-#include <avr/io.h> 
-#include <avr/pgmspace.h>
-#include <util/delay.h>
 #include "yack.h"
 
 // Time after which callsign training is assumed complete
