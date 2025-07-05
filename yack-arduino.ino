@@ -66,13 +66,13 @@ void pitch(void)
 		timer--;
 		yackchar('E');		// play an 'e'
 		
-		if(!(KEYINP & (1<<DITPIN))) // if DIT was keyed
+		if(!digitalRead(DITPIN)) // if DIT was keyed
 	  	{
 	  		yackpitch(DOWN);		// increase the pitch
 	  		timer=PITCHREPEAT;
 	  	}
 		
-		if(!(KEYINP & (1<<DAHPIN))) // if DAH was keyed
+		if(!digitalRead(DAHPIN)) // if DAH was keyed
 	  	{
 	  		yackpitch(UP);	// lower the pitch
 	  		timer=PITCHREPEAT;
@@ -98,13 +98,13 @@ void setfarns(void)
 	while (timer++ != FARNSREPEAT) 			// while not yet timed out
 	{
         
-		if(!(KEYINP & (1<<DITPIN))) // if DIT was keyed
+		if(!digitalRead(DITPIN)) // if DIT was keyed
 	  	{
 	  		yackspeed(DOWN,FARNSWORTH);		// increase the pitch
 	  		timer=0;
 	  	}
 		
-		else if(!(KEYINP & (1<<DAHPIN))) // if DAH was keyed
+		else if(!digitalRead(DAHPIN)) // if DAH was keyed
 	  	{
 	  		yackspeed(UP,FARNSWORTH);	// lower the pitch
 	  		timer=0;

@@ -186,13 +186,13 @@ void yackinit (void)
 	byte magval;
 	
 	// Configure DDR. Make OUT and ST output ports
-	SETBIT (OUTDDR,OUTPIN);    
-	SETBIT (STDDR,STPIN);
+	pinMode(OUTPIN, OUTPUT);
+	pinMode(STPIN, OUTPUT);
 	
 	// Raise internal pullups for all inputs
-	SETBIT (KEYPORT,DITPIN);  
-	SETBIT (KEYPORT,DAHPIN);
-	SETBIT (BTNPORT,BTNPIN);
+	pinMode(DITPIN, INPUT_PULLUP);
+	pinMode(DAHPIN, INPUT_PULLUP);
+	pinMode(BTNPIN, INPUT_PULLUP);
 	
 	magval = eeprom_read_byte(&magic); // Retrieve magic value
 	
@@ -510,7 +510,7 @@ void yacktune (void)
 	
 	key(DOWN);
 	
-	while(timer && (KEYINP & (1<<DITPIN)) && (KEYINP & (1<<DAHPIN)) && !yackctrlkey(TRUE) )
+	while(timer && (digitalRead(DITPIN) && digitalRead(DAHPIN) && !yackctrlkey(TRUE) )
 	{
 		timer--;
 		yackbeat();
@@ -637,9 +637,9 @@ static void key(byte mode)
         if (volflags & TXKEY) // Are we keying the TX?
         {
             if (yackflags & TXINV) // Do we need to invert keying?
-                CLEARBIT(OUTPORT,OUTPIN);
+                digitalWrite(OUTPIN, LOW);
             else
-                SETBIT(OUTPORT,OUTPIN);
+                digitalWrite(OUTPIN, HIGH);
         }
 
     }
@@ -656,9 +656,9 @@ static void key(byte mode)
         if (volflags & TXKEY) // Are we keying the TX?
         {
             if (yackflags & TXINV) // Do we need to invert keying?
-                SETBIT(OUTPORT,OUTPIN);
+                digitalWrite(OUTPIN, HIGH);
             else
-                CLEARBIT(OUTPORT,OUTPIN);
+                digitalWrite(OUTPIN, LOW);
         }
 
     }
@@ -891,10 +891,10 @@ static void keylatch(void)
 	
 	swap    = ( yackflags & PDLSWAP);
 	
-	if (!( KEYINP & (1<<DITPIN)))
+	if (!digitalRead(DITPIN))
 		volflags |= (swap?DAHLATCH:DITLATCH);
 	
-	if (!( KEYINP & (1<<DAHPIN)))
+	if (!digitalRead(DAHPIN))
 		volflags |= (swap?DITLATCH:DAHLATCH);
 	
 }
@@ -942,13 +942,13 @@ byte yackctrlkey(byte mode)
 		while(!(BTNINP & (1<<BTNPIN))) // Busy wait for release
 		{
             
-			if (!( KEYINP & (1<<DITPIN))) // Someone pressing DIT paddle
+			if (!digitalRead(DITPIN)) // Someone pressing DIT paddle
 			{
 				yackspeed(DOWN,WPMSPEED);
                 volbfr &= ~(CKLATCH); // Ignore that control key was pressed
 			}	
 			
-			if (!( KEYINP & (1<<DAHPIN))) // Someone pressing DAH paddle
+			if (!digitalRead(DAHPIN)) // Someone pressing DAH paddle
 			{
 				yackspeed(UP,WPMSPEED);
                 volbfr &= ~(CKLATCH);
