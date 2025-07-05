@@ -117,7 +117,8 @@
 // CTC mode prescaler.. If changing this, ensure that ctc config
 // is adapted accordingly
 #define		PRESCALE		8
-#define		CTCVAL(n)		((F_CPU/n/2/PRESCALE)-1) // Defines how to compute CTC setting for
+#define		CTCVAL(n)		(n) // Defines how to compute CTC setting for
+#define		CTCSTEP			10
                                                      // a given frequency
 
 // Default sidetone frequency

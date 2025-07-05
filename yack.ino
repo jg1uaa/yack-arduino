@@ -470,9 +470,9 @@ void yackpitch (byte dir)
  */
 {
 	if (dir == UP)
-		ctcvalue--;
+		ctcvalue -= CTCSTEP;
 	if (dir == DOWN)
-		ctcvalue++;
+		ctcvalue += CTCSTEP;
 	
 	if (ctcvalue < MAXCTC)
 		ctcvalue = MAXCTC;
@@ -614,14 +614,7 @@ static void key(byte mode)
     {
         if (volflags & SIDETONE) // Are we generating a Sidetone?
         {
-            OCR0A = ctcvalue;		// Then switch on the Sidetone generator
-            OCR0B = ctcvalue;
-            
-            // Activate CTC mode
-            TCCR0A |= (1<<COM0B0 | 1<<WGM01);
-            
-            // Configure prescaler
-            TCCR0B = 1<<CS01;
+            tone(STPIN, ctcvalue);		// Then switch on the Sidetone generator
         }
         
         if (volflags & TXKEY) // Are we keying the TX?
@@ -639,8 +632,7 @@ static void key(byte mode)
 
         if (volflags & SIDETONE) // Sidetone active?
         {
-            TCCR0A = 0;
-            TCCR0B = 0;
+            noTone(STPIN);
         }
         
         if (volflags & TXKEY) // Are we keying the TX?
