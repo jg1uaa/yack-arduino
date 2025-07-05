@@ -23,28 +23,18 @@
 // The following settings define the hardware connections to the keyer chip
 
 // Definition of where the keyer itself is connected 
-#define		KEYDDR			DDRB
-#define		KEYPORT			PORTB
-#define		KEYINP			PINB
-#define		DITPIN			3
-#define		DAHPIN			4
+#define		DITPIN			7
+#define		DAHPIN			8
 
 // Definition of where the transceiver keyer line is connected
-#define		OUTDDR			DDRB
-#define		OUTPORT			PORTB
-#define		OUTPIN			0
+#define		OUTPIN			4
 
 // Definition of where the sidetone output is connected (beware,
 // this is chip dependent and can not just be changed at will)
-#define		STDDR			DDRB
-#define		STPORT			PORTB
-#define		STPIN			1
+#define		STPIN			5
 
 // Definition of where the control button is connected
-#define		BTNDDR			DDRB
-#define		BTNPORT			PORTB
-#define		BTNINP			PINB
-#define		BTNPIN			2
+#define		BTNPIN			6
 
 
 // The following defines the meaning of status bits in the yackflags and volflags 
