@@ -514,7 +514,7 @@ void commandmode(void)
 
 void setup(void)
 /*! 
- @brief     initialize 
+ @brief     initialize
  
  Initialize Yack library
 */
@@ -523,8 +523,8 @@ void setup(void)
 }
 
 
-void loop(void) 
-/*! 
+void loop(void)
+/*!
  @brief     Trivial main loop
  
  Command mode is entered on request and both

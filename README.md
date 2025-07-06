@@ -146,7 +146,7 @@ The keyer immediately responds with "1" or "2" after which a message up to 100 c
 After 5 seconds of inactivity the message is played back once and then stored in EEPROM. Choosing "1" or "2" but not keying 
 a new message deletes the chosen message buffer content.
 
-#### E and T - Play back internal messages 1 or 2 
+#### E and T - Play back internal messages 1 or 2
 
 The stored messages 1 or 2 are played back with keying enabled (if configured). A press of the command key immediately
 returns the keyer to keyer mode so a QSO can be started.
