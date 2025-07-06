@@ -458,7 +458,9 @@ void yield (void)
  To avoid busy loop in delay(), call SLEEP instruction.
  */
 {
-	sleep_cpu();
+#if defined(__AVR__)
+	asm __volatile__("sleep");
+#endif
 }
 
 
