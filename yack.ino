@@ -463,7 +463,7 @@ void yackbeat (void)
 
 void yield (void)
 /*!
- @brief     CPU sleep function in delay()	
+ @brief     CPU sleep function in delay()
 
  To avoid busy loop in delay(), call SLEEP instruction.
  */
@@ -955,7 +955,7 @@ byte yackctrlkey(byte mode)
 			
 		}
         
-		delay(50); // Trailing edge debounce	
+		delay(50); // Trailing edge debounce
 		
 	}
 
