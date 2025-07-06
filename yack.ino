@@ -451,6 +451,20 @@ void yackbeat (void)
 
 
 
+void yield (void)
+/*!
+ @brief     CPU sleep function in delay()	
+
+ To avoid busy loop in delay(), call SLEEP instruction.
+ */
+{
+#if defined(__AVR__)
+	asm __volatile__("sleep");
+#endif
+}
+
+
+
 void yackpitch (byte dir)
 /*! 
  @brief     Increases or decreases the sidetone pitch
