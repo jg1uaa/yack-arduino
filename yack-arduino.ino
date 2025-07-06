@@ -512,32 +512,29 @@ void commandmode(void)
 
 
 
-int main(void) 
+void setup(void)
 /*! 
- @brief     Trivial main routine
+ @brief     initialize 
  
- Yack library is initialized, command mode is entered on request and both 
- beacon and keyer routines are called in 10 ms intervals.
- 
- @return Not relevant
+ Initialize Yack library
 */
 {
-	
-	yackinit(); 					// Initialize YACK hardware
-	
-	while(1) // Endless core loop of the keyer app
-	{
-		
-		if (yackctrlkey(TRUE)) // If command key pressed, go to command mode
-			commandmode();
-		
-       	yackbeat();
-		beacon(PLAY); // Play beacon if requested
-       	yackiambic(OFF);
-        
-	}
-	
-	return 0;
+	yackinit(); 		// Initialize YACK hardware
 }
 
 
+void loop(void) 
+/*! 
+ @brief     Trivial main loop
+ 
+ Command mode is entered on request and both
+ beacon and keyer routines are called in 10 ms intervals.
+*/
+{
+	if (yackctrlkey(TRUE)) // If command key pressed, go to command mode
+		commandmode();
+		
+       	yackbeat();
+	beacon(PLAY); // Play beacon if requested
+       	yackiambic(OFF);
+}
