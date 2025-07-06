@@ -27,6 +27,7 @@
 */ 
 
 
+#include <EEPROM.h>
 #include "yack.h"
 
 // Forward declaration of private functions
@@ -51,18 +52,21 @@ static		word	wpmcnt;			// Speed
 static      byte    wpm;            // Real wpm
 static      byte    farnsworth;     // Additional Farnsworth pause
 
-// EEPROM Data
+// EEPROM Data and Offset
 
-byte		magic EEMEM = MAGPAT;	// Needs to contain 'A5' if mem is valid
-byte		flagstor EEMEM = ( IAMBICB | TXKEY | SIDETONE | TXINV);	//	Defaults	
-word		ctcstor EEMEM = DEFCTC;	// Pitch = 800Hz
-byte		wpmstor EEMEM = DEFWPM;	// 12 WPM
-byte        fwstor  EEMEM = 0; // No farnsworth pause
-word		user1 EEMEM = 0; // User storage
-word		user2 EEMEM = 0; // User storage
+const byte eebuffer1_default[] PROGMEM = "";
+const byte eebuffer2_default[] PROGMEM = "";
 
-char		eebuffer1[100] EEMEM = "message 1";
-char		eebuffer2[100] EEMEM = "message 2";
+#define eebuffer2	0
+#define eebuffer1	(eebuffer2 + RBSIZE)
+#define user2_w		(eebuffer1 + RBSIZE)
+#define user1_w		(user2_w + sizeof(word))
+#define fwstor		(user1_w + sizeof(word))
+#define wpmstor		(fwstor + sizeof(farnsworth))
+#define ctcstor_w	(wpmstor + sizeof(wpm))
+#define flagstor	(ctcstor_w + sizeof(ctcvalue))
+#define magic		(flagstor + sizeof(yackflags))
+#define eeprom_used	(magic + sizeof(byte))
 
 // Flash data
 
@@ -152,6 +156,8 @@ void yackreset (void)
  to write the data into EEPROM immediately.
 */
 {
+	EEPROM.put(eebuffer1, eebuffer1_default);
+	EEPROM.put(eebuffer2, eebuffer2_default);
 
 	ctcvalue=DEFCTC; // Initialize to 800 Hz
     wpm=DEFWPM; // Init to default speed
@@ -187,15 +193,15 @@ void yackinit (void)
 	pinMode(DAHPIN, INPUT_PULLUP);
 	pinMode(BTNPIN, INPUT_PULLUP);
 	
-	magval = eeprom_read_byte(&magic); // Retrieve magic value
+	magval = EEPROM.read(magic); // Retrieve magic value
 	
 	if (magval == MAGPAT) // Is memory valid
 	{
-		ctcvalue = eeprom_read_word(&ctcstor); // Retrieve last ctc setting
-		wpm = eeprom_read_byte(&wpmstor); // Retrieve last wpm setting
-        wpmcnt=(1200/YACKBEAT)/wpm; // Calculate speed
-		farnsworth = eeprom_read_byte(&fwstor); // Retrieve last wpm setting	
-		yackflags = eeprom_read_byte(&flagstor); // Retrieve last flags	
+		EEPROM.get(ctcstor_w, ctcvalue); // Retrieve last ctc setting
+		wpm = EEPROM.read(wpmstor); // Retrieve last wpm setting
+		wpmcnt=(1200/YACKBEAT)/wpm; // Calculate speed
+		farnsworth = EEPROM.read(fwstor); // Retrieve last wpm setting
+		yackflags = EEPROM.read(flagstor); // Retrieve last flags
 	}
 	else
 	{
@@ -290,11 +296,11 @@ void yacksave (void)
 	if(volflags & DIRTYFLAG) // Dirty flag set?
 	{	
 		
-		eeprom_write_byte(&magic, MAGPAT);
-		eeprom_write_word(&ctcstor, ctcvalue);
-		eeprom_write_byte(&wpmstor, wpm);
-		eeprom_write_byte(&flagstor, yackflags);
-        eeprom_write_byte(&fwstor, farnsworth);
+		EEPROM.update(magic, MAGPAT);
+		EEPROM.put(ctcstor_w, ctcvalue);
+		EEPROM.update(wpmstor, wpm);
+		EEPROM.update(flagstor, yackflags);
+		EEPROM.update(fwstor, farnsworth);
 		
 		volflags &= ~DIRTYFLAG; // Clear the dirty flag
 	}
@@ -352,19 +358,23 @@ word yackuser (byte func, byte nr, word content)
     
 	if (func == READ)
 	{
-		if (nr == 1) 
-			return (eeprom_read_word(&user1));
-		else if (nr == 2)
-			return (eeprom_read_word(&user2));
+		word data;
+		if (nr == 1) {
+			EEPROM.get(user1_w, data);
+			return data;
+		} else if (nr == 2) {
+			EEPROM.get(user2_w, data);
+			return data;
+		}
 	}
 	
 	if (func == WRITE)
 	{
         
 		if (nr == 1)
-			eeprom_write_word(&user1, content);
+			EEPROM.put(user1_w, content);
 		else if (nr == 2)
-			eeprom_write_word(&user2, content);
+			EEPROM.put(user2_w, content);
 	}
 
     return (FALSE);
@@ -453,7 +463,7 @@ void yackbeat (void)
 
 void yield (void)
 /*!
- @brief     CPU sleep function in delay()	
+ @brief     CPU sleep function in delay()
 
  To avoid busy loop in delay(), call SLEEP instruction.
  */
@@ -945,7 +955,7 @@ byte yackctrlkey(byte mode)
 			
 		}
         
-		delay(50); // Trailing edge debounce	
+		delay(50); // Trailing edge debounce
 		
 	}
 
@@ -1060,9 +1070,9 @@ void yackmessage(byte function, byte msgnr)
 			
 			// Store it in EEPROM
 			if (msgnr == 1)
-	  			eeprom_write_block(rambuffer,eebuffer1,RBSIZE);
+				EEPROM.put(eebuffer1, rambuffer);
 			else
-  	  			eeprom_write_block(rambuffer,eebuffer2,RBSIZE);
+				EEPROM.put(eebuffer2, rambuffer);
 		}
 		else
 			yackerror();
@@ -1073,9 +1083,9 @@ void yackmessage(byte function, byte msgnr)
 	{
 		// Retrieve the message from EEPROM
 		if (msgnr == 1)
-	  		eeprom_read_block(rambuffer,eebuffer1,RBSIZE);
+			EEPROM.get(eebuffer1, rambuffer);
 		else
-  	  		eeprom_read_block(rambuffer,eebuffer2,RBSIZE);
+			EEPROM.get(eebuffer2, rambuffer);
 		
 		// Replay the message
 		for (n=0;(c=rambuffer[n]);n++) // Read until end of message
