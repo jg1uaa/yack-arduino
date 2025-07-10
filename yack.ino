@@ -137,7 +137,7 @@ const byte morse[] PROGMEM =
 // To add new characters, add them in the code table above at the end and below
 // Do not forget to increase the legth of the array..
 
-const char spechar[6] PROGMEM = "?=.#$/";
+const char spechar[6] PROGMEM = {'?', '=', '.', '#', '$', '/'};
 
 
 
